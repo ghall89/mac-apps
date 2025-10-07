@@ -1,15 +1,18 @@
 package apps
 
 import (
+	"bytes"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"howett.net/plist"
 )
 
-func GetApps() []fs.FileInfo {
-	var res []fs.FileInfo
+func GetApps() []AppResult {
+	var res []AppResult
 
 	usrDir, err := os.UserHomeDir()
 	if err != nil {
@@ -32,7 +35,10 @@ func GetApps() []fs.FileInfo {
 				if err != nil {
 					return err
 				}
-				res = append(res, info)
+
+				name := info.Name()
+
+				res = append(res, AppResult{Name: name, Path: root + `/` + name})
 				return filepath.SkipDir
 			}
 
@@ -44,4 +50,24 @@ func GetApps() []fs.FileInfo {
 	}
 
 	return res
+}
+
+func GetInfo(path string) PlistRoot {
+	filePath := path + "/Contents/Info.plist"
+
+	file, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r := bytes.NewReader(file)
+
+	var data PlistRoot
+
+	dec := plist.NewDecoder(r)
+	if err := dec.Decode(&data); err != nil {
+		log.Fatal(err)
+	}
+
+	return data
 }
