@@ -1,7 +1,7 @@
 package input
 
 import (
-	"mac-apps/internal/apps"
+	"mapp/internal/apps"
 
 	"github.com/charmbracelet/huh"
 )

@@ -1,3 +1,3 @@
-# mac-apps
+# mapp
 
 View installed apps on macOS.
